@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --navy-900: #0F2C47;
+    --navy-700: #1A456F;
+    --blue-600: #275079;
+    --blue-500: #336E95;
+    --sky-400: #62B5DA;
+    --orange-500: #F4974C;
+    --orange-600: #F0853F;
+    --orange-700: #E57737;
+    --ink: #0B1B2B;
+    --mist: #F3F7FA;
+    --white: #FFFFFF;
+    
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background-color: var(--white);
+    scroll-behavior: smooth;
+  }
+
+  /* Universal focus outline for accessibility */
+  :focus-visible {
+    outline: 2px solid var(--orange-500);
+    outline-offset: 2px;
+  }
+
+  /* Tabular figures using Plus Jakarta Sans */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0F2C47;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #336E95;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #62B5DA;
+}
