@@ -11,20 +11,27 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        setScrollProgress((window.scrollY / totalHeight) * 100);
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Lock body scroll when mobile menu drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -34,17 +41,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
 
   return (
     <>
-      {/* Top Scroll Progress Indicator */}
-      <div 
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-[#62B5DA] to-[#F4974C] z-50 transition-all duration-150 ease-out"
-        style={{ width: `${scrollProgress}%` }}
-        aria-hidden="true"
-      />
-
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        className={`sticky top-0 z-40 w-full transition-all duration-300 ${
           isScrolled
-            ? 'bg-[#0F2C47]/95 backdrop-blur-md shadow-lg shadow-[#0B1B2B]/20 py-3 border-b border-[#336E95]/30'
+            ? 'bg-[#0F2C47]/95 backdrop-blur-md shadow-lg shadow-[#0B1B2B]/20 py-3.5 border-b border-[#336E95]/30'
             : 'bg-[#0F2C47] py-4 border-b border-[#1A456F]/40'
         }`}
       >
@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
                 <span className="text-xl font-bold tracking-tight text-white whitespace-nowrap">
                   SMS
                 </span>
-                <span className="text-[11px] font-medium tracking-wide text-[#62B5DA] whitespace-nowrap hidden sm:inline">
+                <span className="text-[13px] font-medium tracking-wide text-[#62B5DA] whitespace-nowrap hidden sm:inline">
                   Safety Management Solutions
                 </span>
               </div>
@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
 
             {/* Zone 2: Primary Navigation Links (Single-Line, Hover Underlines) */}
             <nav 
-              className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-200"
+              className="hidden lg:flex items-center gap-6 text-[14px] font-medium text-slate-200"
               aria-label="Main Navigation"
             >
               {siteContent.navigation.map((item) => {
@@ -102,20 +102,11 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
             {/* Zone 3: Primary Action Call to Action */}
             <div className="flex items-center gap-3 shrink-0">
               <a
-                href="tel:+919334701135"
-                className="hidden xl:flex items-center gap-2 text-xs font-medium text-[#62B5DA] hover:text-white transition-colors py-1.5 px-3 rounded-lg border border-[#336E95]/40 hover:border-[#62B5DA]/60"
-                aria-label="Call +91 93347 01135"
-              >
-                <Phone className="w-3.5 h-3.5 text-[#F4974C]" />
-                <span className="tabular-nums">+91 93347 01135</span>
-              </a>
-
-              <a
                 href="/contact/"
                 onClick={(e) => handleLinkClick(e, '/contact/')}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs md:text-sm font-bold text-[#0F2C47] bg-[#F4974C] hover:bg-[#F0853F] active:bg-[#E57737] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-[#F4974C]/20 whitespace-nowrap shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 text-[14px] font-bold text-[#0F2C47] bg-[#F4974C] hover:bg-[#F0853F] active:bg-[#E57737] rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-[#F4974C]/20 whitespace-nowrap shrink-0"
               >
-                <span>Get a Free Quote</span>
+                <span>Request a Quote</span>
                 <ArrowUpRight className="w-4 h-4 shrink-0 text-[#0F2C47]" />
               </a>
 
@@ -144,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
           aria-label="Mobile Navigation Drawer"
         >
           <div className="flex items-center justify-between pb-6 border-b border-[#1A456F]">
-            <span className="text-xs uppercase tracking-wider text-[#62B5DA] font-semibold">
+            <span className="text-[13px] uppercase tracking-wider text-[#62B5DA] font-semibold">
               Menu Navigation
             </span>
             <button
@@ -177,12 +168,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
           </nav>
 
           <div className="mt-auto pt-6 border-t border-[#1A456F] flex flex-col gap-3">
-            <div className="text-xs text-slate-400 leading-relaxed">
+            <div className="text-[13px] text-slate-400 leading-relaxed">
               Main Road, Walking Street, 4th Floor, Ranchi, Jharkhand
             </div>
             <a
               href="tel:+919334701135"
-              className="flex items-center gap-2 text-sm text-white font-medium p-3 bg-[#1A456F] rounded-lg"
+              className="flex items-center gap-2 text-[14px] text-white font-medium p-3 bg-[#1A456F] rounded-lg"
             >
               <Phone className="w-4 h-4 text-[#F4974C]" />
               <span className="tabular-nums">+91 93347 01135</span>
@@ -190,9 +181,9 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
             <a
               href="/contact/"
               onClick={(e) => handleLinkClick(e, '/contact/')}
-              className="flex items-center justify-center py-3 text-center text-sm font-bold text-[#0F2C47] bg-[#F4974C] rounded-lg hover:bg-[#F0853F]"
+              className="flex items-center justify-center py-3 text-center text-[14px] font-bold text-[#0F2C47] bg-[#F4974C] rounded-lg hover:bg-[#F0853F]"
             >
-              Request Free Consultation
+              Request Safety Consultation
             </a>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { Shield, AlertTriangle } from 'lucide-react';
 
 export const PrivacyPolicyPage: React.FC = () => {
   return (
-    <div className="pt-28 pb-20 bg-[#F3F7FA] text-[#0B1B2B]">
+    <div className="bg-[#F3F7FA] text-[#0B1B2B] pb-20">
       <section className="bg-[#0F2C47] text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-[#1A456F]">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2 text-xs font-semibold text-[#62B5DA] uppercase tracking-wider mb-2">

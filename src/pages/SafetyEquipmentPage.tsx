@@ -46,10 +46,10 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({
   };
 
   return (
-    <div className="pt-28 pb-20 bg-[#F3F7FA] text-[#0B1B2B]">
+    <div className="bg-[#F3F7FA] text-[#0B1B2B] pb-20">
       
       {/* Header Banner */}
-      <section className="bg-[#0F2C47] text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-[#1A456F]">
+      <section className="bg-[#0F2C47] text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-b border-[#1A456F]">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 text-xs font-semibold text-[#62B5DA] uppercase tracking-wider mb-2">

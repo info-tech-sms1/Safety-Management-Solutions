@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import Lenis from 'lenis';
 import { normalizePath, routesMeta, AppRoute } from './utils/router';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { HomePage } from './pages/HomePage';
-import { ServicesPage } from './pages/ServicesPage';
-import { EvacuationPlanningPage } from './pages/EvacuationPlanningPage';
-import { SafetyEquipmentPage } from './pages/SafetyEquipmentPage';
-import { AwarenessEventsPage } from './pages/AwarenessEventsPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { TermsPage } from './pages/TermsPage';
-import { NotFoundPage } from './pages/NotFoundPage';
-import { siteContent } from './content/siteContent';
+
+const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const EvacuationPlanningPage = lazy(() => import('./pages/EvacuationPlanningPage').then(m => ({ default: m.EvacuationPlanningPage })));
+const SafetyEquipmentPage = lazy(() => import('./pages/SafetyEquipmentPage').then(m => ({ default: m.SafetyEquipmentPage })));
+const AwarenessEventsPage = lazy(() => import('./pages/AwarenessEventsPage').then(m => ({ default: m.AwarenessEventsPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState<AppRoute>(() => {
@@ -25,7 +26,35 @@ export default function App() {
 
   const [preselectedService, setPreselectedService] = useState<string>('');
 
-  // Sync document title and meta whenever route changes
+  // Initialize Lenis Smooth Scrolling (respecting prefers-reduced-motion)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    let animationFrameId: number;
+
+    function raf(time: number) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+
+    animationFrameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+    };
+  }, []);
+
+  // Sync document title, meta descriptions, and canonical links on route changes
   useEffect(() => {
     const meta = routesMeta[currentPath];
     if (meta) {
@@ -53,7 +82,7 @@ export default function App() {
     }
   }, [currentPath]);
 
-  // Listen for browser forward/back buttons
+  // Listen for browser forward/back history events
   useEffect(() => {
     const handlePopState = () => {
       setCurrentPath(normalizePath(window.location.pathname));
@@ -120,8 +149,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-[#0B1B2B]">
-      {/* Skip to Content Accessible Link */}
+    <div className="min-h-screen flex flex-col bg-[#0F2C47] text-[#0B1B2B] pb-16 sm:pb-0">
+      {/* Accessible Skip Link */}
       <a 
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-[#F4974C] text-[#0F2C47] font-bold rounded-lg shadow-lg"
@@ -133,14 +162,27 @@ export default function App() {
       <Header currentPath={currentPath} onNavigate={navigateTo} />
 
       {/* Main Dynamic Viewport */}
-      <div id="main-content" className="flex-1">
-        {renderActivePage()}
-      </div>
+      <main id="main-content" className="flex-1">
+        <Suspense
+          fallback={
+            <div className="min-h-[60vh] flex items-center justify-center bg-[#0F2C47]">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-[#336E95] border-t-[#F4974C] rounded-full animate-spin" />
+                <span className="text-[13px] font-semibold text-[#62B5DA] tracking-wider uppercase">
+                  Loading page...
+                </span>
+              </div>
+            </div>
+          }
+        >
+          {renderActivePage()}
+        </Suspense>
+      </main>
 
-      {/* Global Quick Action Floating Elements */}
+      {/* Floating Actions (WhatsApp & Mobile Bar) */}
       <FloatingActions />
 
-      {/* Persistent Institutional Footer */}
+      {/* Persistent Footer */}
       <Footer onNavigate={navigateTo} />
     </div>
   );

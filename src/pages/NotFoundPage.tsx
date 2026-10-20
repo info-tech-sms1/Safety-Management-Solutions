@@ -8,7 +8,7 @@ interface NotFoundPageProps {
 
 export const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
   return (
-    <div className="pt-32 pb-24 bg-[#0F2C47] text-white min-h-[80vh] flex items-center justify-center px-4">
+    <div className="py-16 sm:py-20 bg-[#0F2C47] text-white min-h-[70vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center space-y-6 bg-[#1A456F]/40 border border-[#336E95]/40 rounded-3xl p-8 backdrop-blur-md shadow-2xl">
         <div className="w-16 h-16 rounded-2xl bg-[#0F2C47] border border-[#F4974C] flex items-center justify-center mx-auto text-[#F4974C]">
           <ShieldAlert className="w-8 h-8" />
